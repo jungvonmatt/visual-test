@@ -1,6 +1,7 @@
 {
-  "name": "visual-regression-testing",
+  "name": "@jvm/visual-regression-testing",
   "version": "0.0.0",
+  "private": true,
   "description": "Automated visual regression testing",
   "main": "index.js",
   "bin": "visual-tester",
