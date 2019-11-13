@@ -36,15 +36,22 @@ const cli = meow(
 
 const getProject = async () => {
   const { configDir } = cli.flags;
-  const choices = await getProjects(configDir);
+  console.log('CWD:', process.cwd());
+  const choices1 = await getProjects(process.cwd());
+  const choices2 = configDir ? await getProjects(configDir) : [];
+  const choices3 = await getProjects();
 
+  const choices = [...choices1, ...choices2, ...choices3];
+
+  console.log(choices, { choices1, choices2, choices3 });
   if (choices.length === 0) {
     console.log(`${chalk.red('Error, no project specified!')}`);
   }
 
-  if (choices.length < 2) {
+  if (choices.length === 1) {
     console.log(`  ${chalk.bold('Project')} ${chalk.cyan(choices[0].name)}`);
-    return choices[0];
+    const { value: project } = choices[0];
+    return project;
   }
 
   const { project } = await inquirer.prompt({
@@ -59,10 +66,10 @@ const getProject = async () => {
 
 const getEnvironment = async project => {
   const { value } = project || {};
-  const config = require(value);
-  const { environments = [], urls, ...args } = config;
-  const choices = await getValue(environments);
 
+  const config = require(value);
+  const { environments = [], urls = [], ...args } = config;
+  const choices = await getValue(environments);
   if (choices.length === 0) {
     return {
       ...args,
@@ -73,10 +80,12 @@ const getEnvironment = async project => {
 
   if (choices.length === 1) {
     console.log(`  ${chalk.bold('Environment')} ${chalk.cyan(choices[0].name)}`);
+    const { value: environment } = choices[0];
     return {
       ...args,
-      uid: `${project.name.toLowerCase()}/${getHostame(choices[0])}`,
-      urls: await getValue(urls, choices[0]),
+      ...environment,
+      uid: `${project.name.toLowerCase()}/${getHostame(environment)}`,
+      urls: await getValue(urls, environment),
     };
   }
 
@@ -89,6 +98,7 @@ const getEnvironment = async project => {
 
   return {
     ...args,
+    ...environment,
     uid: `${project.name.toLowerCase()}/${getHostame(environment)}`,
     urls: await getValue(urls, environment),
   };
@@ -97,6 +107,7 @@ const getEnvironment = async project => {
 // Run
 (async () => {
   const project = await getProject();
+
   const environment = await getEnvironment(project);
   const [cmd = 'test'] = cli.input;
 

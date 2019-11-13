@@ -6,8 +6,9 @@ const os = require('os');
 const { URL } = require('url');
 const chalk = require('chalk');
 const backstopjs = require('backstopjs');
-var xdgBasedir = require('xdg-basedir');
-var dataDir = path.join(xdgBasedir.data || os.tmpdir(), 'visual-regression-testing');
+const xdgBasedir = require('xdg-basedir');
+const { getSitemap, getUrlsFromSitemap } = require('./lib/utils');
+const dataDir = path.join(xdgBasedir.data || os.tmpdir(), 'visual-regression-testing');
 
 const defaultConfig = {
   query: '',
@@ -43,10 +44,16 @@ const getConfig = async environment => {
     scrollToSelector,
     debug,
     cookiePath,
+    sitemap,
     selectors = [],
     ...envConfig
   } = environment;
   const dataPath = path.join(dataDir, uid);
+
+  let autoUrls = [];
+  if (sitemap) {
+    autoUrls = await getSitemap(environment);
+  }
 
   return {
     ...defaults,
@@ -65,7 +72,7 @@ const getConfig = async environment => {
       ci_report: path.join(dataPath, 'report_ci'),
     },
 
-    scenarios: urls.map(u => {
+    scenarios: [...new Set([...urls, ...autoUrls])].map(u => {
       const url = new URL(u);
       if (query) {
         const searchParams = new URLSearchParams(url.search);

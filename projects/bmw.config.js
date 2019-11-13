@@ -32,6 +32,15 @@ module.exports = {
       },
     },
     {
+      name: 'Int A6',
+      value: {
+        host: 'https://m1.bmw-int6.com',
+        base: '/en',
+        user: 'stage2user',
+        pass: 'Wdin4twf',
+      },
+    },
+    {
       name: 'Preprod',
       value: {
         host: 'https://m1.bmw-preprod.com',
@@ -50,7 +59,7 @@ module.exports = {
   ],
 
   urls: async environment => {
-    const { author, host, base, user, pass } = environment || {};
+    const { author, host, base = '/', user, pass } = environment || {};
     const resource = `${host}${base}/sitemap.txt`;
 
     const options = {
