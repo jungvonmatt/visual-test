@@ -1,6 +1,7 @@
 # JvM Visual Regression Tester
 
-Automates visual regression testing of our projects by comparing DOM screenshots over time.
+Automates visual regression testing of our projects by comparing DOM screenshots over time.<br/>
+Convinience wrapper around [`BackstopJS`](https://garris.github.io/BackstopJS/)
 
 ## Install
 
