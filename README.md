@@ -18,7 +18,6 @@ npm i
 
 I suggest to add a symlink inside `~/bin` to the executable so the tool can be started from anywhere.
 
-
 ## Usage
 
 **Initialize project**
@@ -60,8 +59,9 @@ Or just call with the url to the sitemap
 ## Add projects
 
 This is currently configured for the bmw.com website. To add other projects you need to place a config file in one of the following locations:
-* Inside the projects directory in this Repo.
-* In a custom path specified by
+
+- Inside the projects directory in this Repo.
+- In a custom path specified by
 
 Name: `project`.visualtest.config.js<br>
 Example:
