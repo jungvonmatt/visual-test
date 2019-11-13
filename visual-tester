@@ -1,0 +1,102 @@
+#!/usr/bin/env node
+
+'use strict';
+const inquirer = require('inquirer');
+const chalk = require('chalk');
+const meow = require('meow');
+const { getProjects, getValue, getHostame } = require('./lib/utils');
+
+const run = require('.');
+
+const cli = meow(
+  `
+	Usage
+    $ visual-tester <cmd>
+
+  Cmd
+    test      Compare with reference images
+    approve   Approve test
+    reference Generate reference images
+
+	Options
+	  --query  Add query params to page request
+
+	Examples
+	  $ visual-tester test --query 'optimize-css=0'
+`,
+  {
+    flags: {
+      query: {
+        type: 'string',
+      },
+    },
+  }
+);
+
+const getProject = async () => {
+  const choices = await getProjects();
+
+  if (choices.length === 0) {
+    console.log(`${chalk.red('Error, no project specified!')}`);
+  }
+
+  if (choices.length < 2) {
+    console.log(`  ${chalk.bold('Project')} ${chalk.cyan(choices[0].name)}`);
+    return choices[0];
+  }
+
+  const { project } = await inquirer.prompt({
+    type: 'list',
+    name: 'project',
+    message: 'Choose project',
+    choices,
+  });
+
+  return project;
+};
+
+const getEnvironment = async project => {
+  const { value } = project || {};
+  const config = require(value);
+  const { environments, urls, ...args } = config;
+  const choices = await getValue(environments);
+
+  if (choices.length === 0) {
+    return {
+      ...args,
+      uid: project.name.toLowerCase(),
+      urls: await getValue(urls),
+    };
+  }
+
+  if (choices.length === 1) {
+    console.log(`  ${chalk.bold('Environment')} ${chalk.cyan(choices[0].name)}`);
+    return {
+      ...args,
+      uid: `${project.name.toLowerCase()}/${getHostame(choices[0])}`,
+      urls: await getValue(urls, choices[0]),
+    };
+  }
+
+  const { environment } = await inquirer.prompt({
+    type: 'list',
+    name: 'environment',
+    message: 'Choose environment',
+    choices,
+  });
+
+  return {
+    ...args,
+    uid: `${project.name.toLowerCase()}/${getHostame(environment)}`,
+    urls: await getValue(urls, environment),
+  };
+};
+
+// Run
+(async () => {
+  const project = await getProject();
+  const environment = await getEnvironment(project);
+  const [cmd = 'test'] = cli.input;
+
+  await run({ ...environment, ...cli.flags }, cmd);
+})();

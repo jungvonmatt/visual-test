@@ -1,0 +1,71 @@
+{
+  "name": "visual-regression-testing",
+  "version": "0.0.0",
+  "description": "Automated visual regression testing",
+  "main": "index.js",
+  "bin": "visual-tester",
+  "scripts": {
+    "start": "node visual-tester",
+    "init": "node visual-tester reference",
+    "approve": "node visual-tester approve",
+    "lint": "eslint --ignore-path .gitignore  --ignore-pattern engine/*  .",
+    "pretty-quick": "pretty-quick"
+  },
+  "files": [
+    "visual-tester",
+    "index.js",
+    "engine",
+    "utils"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@stash.jvm.de:7999/jin/visual-regression-testing.git"
+  },
+  "author": "Ben Zörb",
+  "dependencies": {
+    "backstopjs": "^4.3.2",
+    "chalk": "^3.0.0",
+    "globby": "^10.0.1",
+    "got": "^9.6.0",
+    "inquirer": "^7.0.0",
+    "meow": "^5.0.0",
+    "node-fetch": "^2.6.0",
+    "xdg-basedir": "^4.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.6.0",
+    "eslint-config-prettier": "^6.5.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "husky": "^3.0.9",
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1"
+  },
+  "eslintConfig": {
+    "plugins": [
+      "prettier"
+    ],
+    "parser": "babel-eslint",
+    "rules": {
+      "prettier/prettier": "error"
+    },
+    "extends": [
+      "prettier"
+    ],
+    "env": {
+      "node": true,
+      "es2017": true
+    }
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 120
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run pretty-quick --staged",
+      "pre-push": "npm run lint"
+    }
+  }
+}
