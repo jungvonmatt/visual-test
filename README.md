@@ -51,22 +51,22 @@ You can specify a custom config directory using the `--config-dir` option
 visual-tester test --config-dir ~/.my-visualtest-directory
 ```
 
+Or just call with the url to the sitemap
+
 ```
 visual-tester test https://fahrrad.hamburg/sitemap.xml
 ```
-
-Or just call with the url to the sitemap
 
 ## Add projects
 
 This is currently configured for the bmw.com website. To add other projects you need to place a config file in one of the following locations:
 
-- Inside the projects directory in this Repo.
-- In a custom path specified by
+- In a custom path specified by `--config-dir``
+- In the current working directory
 
-Name: `project`.visualtest.config.js<br>
-Example:
+Name: `project`.visualtest.config.js
 
+**Example:**
 ```
 module.exports = {
   environments: [
@@ -95,3 +95,5 @@ module.exports = {
 ```
 
 You can also use an async function instead of the static array. The `urls` function receives the chosen environment as first parameter so you might grab the sitemap.xml to generate the urls dynamically
+
+For mor examples see the files in [`example`](https://stash.jvm.de/projects/JIN/repos/visual-regression-testing/browse/example)
