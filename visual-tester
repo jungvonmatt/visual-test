@@ -19,7 +19,8 @@ const cli = meow(
     reference Generate reference images
 
 	Options
-	  --query  Add query params to page request
+    --query       Add query params to page request
+    --config-dir  Specify custom directory to search for project configs
 
 	Examples
 	  $ visual-tester test --query 'optimize-css=0'
@@ -34,7 +35,8 @@ const cli = meow(
 );
 
 const getProject = async () => {
-  const choices = await getProjects();
+  const { configDir } = cli.flags;
+  const choices = await getProjects(configDir);
 
   if (choices.length === 0) {
     console.log(`${chalk.red('Error, no project specified!')}`);
@@ -58,7 +60,7 @@ const getProject = async () => {
 const getEnvironment = async project => {
   const { value } = project || {};
   const config = require(value);
-  const { environments, urls, ...args } = config;
+  const { environments = [], urls, ...args } = config;
   const choices = await getValue(environments);
 
   if (choices.length === 0) {

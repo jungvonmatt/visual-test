@@ -33,7 +33,19 @@ const defaultConfig = {
 
 const getConfig = async environment => {
   const { delay: defaultDelay, ...defaults } = defaultConfig;
-  const { urls, uid, query, delay = defaultDelay, debug, cookiePath, selectors = [], ...envConfig } = environment;
+  const {
+    urls,
+    uid,
+    query,
+    delay = defaultDelay,
+    hoverSelectors,
+    clickSelectors,
+    scrollToSelector,
+    debug,
+    cookiePath,
+    selectors = [],
+    ...envConfig
+  } = environment;
   const dataPath = path.join(dataDir, uid);
 
   return {
@@ -49,8 +61,8 @@ const getConfig = async environment => {
       engine_scripts: path.join(__dirname, 'engine/scripts'),
       bitmaps_reference: path.join(dataPath, 'bitmaps_reference'),
       bitmaps_test: path.join(dataPath, 'bitmaps_test'),
-      html_report: path.join(dataDir, 'report_html'),
-      ci_report: path.join(dataDir, 'report_ci'),
+      html_report: path.join(dataPath, 'report_html'),
+      ci_report: path.join(dataPath, 'report_ci'),
     },
 
     scenarios: urls.map(u => {
@@ -71,6 +83,9 @@ const getConfig = async environment => {
         url: url.href,
         selectors: ['document', ...selectors],
         delay,
+        hoverSelectors,
+        clickSelectors,
+        scrollToSelector,
       };
 
       if (cookiePath && fs.existsSync(cookiePath)) {
