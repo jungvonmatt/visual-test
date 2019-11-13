@@ -48,12 +48,9 @@ const getConfig = async environment => {
     selectors = [],
     ...envConfig
   } = environment;
-  const dataPath = path.join(dataDir, uid);
 
-  let autoUrls = [];
-  if (sitemap) {
-    autoUrls = await getSitemap(environment);
-  }
+  console.log(environment, { dataDir, uid });
+  const dataPath = path.join(dataDir, uid);
 
   return {
     ...defaults,
@@ -72,7 +69,7 @@ const getConfig = async environment => {
       ci_report: path.join(dataPath, 'report_ci'),
     },
 
-    scenarios: [...new Set([...urls, ...autoUrls])].map(u => {
+    scenarios: urls.map(u => {
       const url = new URL(u);
       if (query) {
         const searchParams = new URLSearchParams(url.search);

@@ -4,7 +4,8 @@
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 const meow = require('meow');
-const { getProjects, getValue, getHostame } = require('./lib/utils');
+const { URL } = require('url');
+const { getProjects, getValue, getHostame, getSitemap } = require('./lib/utils');
 
 const run = require('.');
 
@@ -36,20 +37,17 @@ const cli = meow(
 
 const getProject = async () => {
   const { configDir } = cli.flags;
-  console.log('CWD:', process.cwd());
   const choices1 = await getProjects(process.cwd());
   const choices2 = configDir ? await getProjects(configDir) : [];
   const choices3 = await getProjects();
 
   const choices = [...choices1, ...choices2, ...choices3];
 
-  console.log(choices, { choices1, choices2, choices3 });
   if (choices.length === 0) {
     console.log(`${chalk.red('Error, no project specified!')}`);
   }
 
   if (choices.length === 1) {
-    console.log(`  ${chalk.bold('Project')} ${chalk.cyan(choices[0].name)}`);
     const { value: project } = choices[0];
     return project;
   }
@@ -64,11 +62,26 @@ const getProject = async () => {
   return project;
 };
 
+const getEnvironmentFromSitemap = async sitemap => {
+  const url = new URL(sitemap);
+  const environment = {
+    host: url.origin,
+    user: url.username,
+    pass: url.password,
+    sitemap: url.pathname,
+  };
+
+  return {
+    ...environment,
+    uid: url.hostname,
+    urls: await getSitemap(environment),
+  };
+};
+
 const getEnvironment = async project => {
   const { value } = project || {};
-
-  const config = require(value);
-  const { environments = [], urls = [], ...args } = config;
+  const config = typeof value === 'string' ? require(value) : value;
+  const { environments = [], urls, ...args } = config;
   const choices = await getValue(environments);
   if (choices.length === 0) {
     return {
@@ -79,13 +92,14 @@ const getEnvironment = async project => {
   }
 
   if (choices.length === 1) {
-    console.log(`  ${chalk.bold('Environment')} ${chalk.cyan(choices[0].name)}`);
     const { value: environment } = choices[0];
     return {
       ...args,
       ...environment,
       uid: `${project.name.toLowerCase()}/${getHostame(environment)}`,
-      urls: await getValue(urls, environment),
+      urls: urls
+        ? await getValue(urls, { ...environment, urls: await getSitemap(environment) })
+        : await getSitemap(environment),
     };
   }
 
@@ -100,16 +114,19 @@ const getEnvironment = async project => {
     ...args,
     ...environment,
     uid: `${project.name.toLowerCase()}/${getHostame(environment)}`,
-    urls: await getValue(urls, environment),
+    urls: urls
+      ? await getValue(urls, { ...environment, urls: await getSitemap(environment) })
+      : await getSitemap(environment),
   };
 };
 
 // Run
 (async () => {
-  const project = await getProject();
+  const [cmd = 'test', sitemap = ''] = cli.input;
+  const fromSitemap = /\:\/\//.test(sitemap);
 
-  const environment = await getEnvironment(project);
-  const [cmd = 'test'] = cli.input;
+  const project = fromSitemap ? {} : await getProject();
+  const environment = fromSitemap ? await getEnvironmentFromSitemap(sitemap) : await getEnvironment(project);
 
   await run({ ...environment, ...cli.flags }, cmd);
 })();

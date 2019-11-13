@@ -16,6 +16,9 @@ Install dependencies
 npm i
 ```
 
+I suggest to add a symlink inside `~/bin` to the executable so the tool can be started from anywhere.
+
+
 ## Usage
 
 **Initialize project**
@@ -33,20 +36,34 @@ npm i
 **Approve tests**
 
 ```
-./visual-tester approve
+visual-tester approve
 ```
 
 You can optionally add query parameters to the requests with the `--query` argument
 
 ```
-./visual-tester test --query 'optimize-css=1&debug=true'
+visual-tester test --query 'optimize-css=1&debug=true'
 ```
+
+You can specify a custom config directory using the `--config-dir` option
+
+```
+visual-tester test --config-dir ~/.my-visualtest-directory
+```
+
+```
+visual-tester test https://fahrrad.hamburg/sitemap.xml
+```
+
+Or just call with the url to the sitemap
 
 ## Add projects
 
-This is currently configured for the bmw.com website. To add other projects you need to place an according config file inside the projects directory.
+This is currently configured for the bmw.com website. To add other projects you need to place a config file in one of the following locations:
+* Inside the projects directory in this Repo.
+* In a custom path specified by
 
-Name: `project`.config.js<br>
+Name: `project`.visualtest.config.js<br>
 Example:
 
 ```
