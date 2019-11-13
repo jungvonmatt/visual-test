@@ -5,11 +5,13 @@ Automates visual regression testing of our projects by comparing DOM screenshots
 ## Install
 
 Clone project
+
 ```sh
 git clone ssh://git@stash.jvm.de:7999/jin/visual-regression-testing.git
 ```
 
 Install dependencies
+
 ```
 npm i
 ```
@@ -17,31 +19,36 @@ npm i
 ## Usage
 
 **Initialize project**
+
 ```
 ./visual-tester reference
 ```
 
 **Run tests**
+
 ```
 ./visual-tester test
 ```
 
-
 **Approve tests**
+
 ```
 ./visual-tester approve
 ```
 
 You can optionally add query parameters to the requests with the `--query` argument
+
 ```
 ./visual-tester test --query 'optimize-css=1&debug=true'
 ```
 
 ## Add projects
+
 This is currently configured for the bmw.com website. To add other projects you need to place an according config file inside the projects directory.
 
-Name: <project>.config.js<br>
+Name: `project`.config.js<br>
 Example:
+
 ```
 module.exports = {
   environments: [
