@@ -1,19 +1,21 @@
 {
   "name": "@jvm/visual-regression-testing",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Automated visual regression testing",
   "main": "index.js",
-  "bin": "visual-tester",
+  "bin": {
+    "visual-test": "cli.js"
+  },
   "scripts": {
-    "start": "node visual-tester",
-    "init": "node visual-tester reference",
-    "approve": "node visual-tester approve",
+    "start": "node cli.js",
+    "init": "node cli.js reference",
+    "approve": "node cli.js approve",
     "lint": "eslint --ignore-path .gitignore  --ignore-pattern engine/*  .",
     "pretty-quick": "pretty-quick"
   },
   "files": [
-    "visual-tester",
+    "cli.js",
     "index.js",
     "engine",
     "utils"
@@ -26,11 +28,13 @@
   "dependencies": {
     "backstopjs": "^4.3.2",
     "chalk": "^3.0.0",
+    "find-up": "^4.1.0",
     "globby": "^10.0.1",
     "got": "^9.6.0",
     "inquirer": "^7.0.0",
     "meow": "^5.0.0",
     "node-fetch": "^2.6.0",
+    "slugify": "^1.3.6",
     "xdg-basedir": "^4.0.0"
   },
   "devDependencies": {

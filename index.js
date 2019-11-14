@@ -7,12 +7,12 @@ const { URL } = require('url');
 const chalk = require('chalk');
 const backstopjs = require('backstopjs');
 const xdgBasedir = require('xdg-basedir');
-const { getSitemap, getUrlsFromSitemap } = require('./lib/utils');
 const dataDir = path.join(xdgBasedir.data || os.tmpdir(), 'visual-regression-testing');
 
 const defaultConfig = {
-  query: '',
-  delay: 1000,
+  scenarios: {
+    delay: 1000,
+  },
   debug: false,
   asyncCaptureLimit: 5,
   asyncCompareLimit: 50,
@@ -33,34 +33,26 @@ const defaultConfig = {
 };
 
 const getConfig = async environment => {
-  const { delay: defaultDelay, ...defaults } = defaultConfig;
-  const {
-    urls,
-    uid,
-    query,
-    delay = defaultDelay,
-    hoverSelectors,
-    clickSelectors,
-    scrollToSelector,
-    debug,
-    cookiePath,
-    sitemap,
-    selectors = [],
-    ...envConfig
-  } = environment;
+  const { urls, uid, query, backstopjs = {}, outputDir } = environment;
 
-  console.log(environment, { dataDir, uid });
-  const dataPath = path.join(dataDir, uid);
+  const globalOverwrites = {
+    ...defaultConfig,
+    ...backstopjs,
+  };
+
+  const scenarioOverwrites = {
+    ...(defaultConfig.scenarios || {}),
+    ...(backstopjs.scenarios || {}),
+  };
+
+  const dataPath = outputDir || path.join(dataDir, uid);
+  const { cookiePath } = scenarioOverwrites;
 
   return {
-    ...defaults,
-    ...envConfig,
     id: uid,
     report: ['browser', 'CI'],
     engine: 'puppeteer',
     engineFlags: [],
-    debug,
-    debugWindow: debug,
     paths: {
       engine_scripts: path.join(__dirname, 'engine/scripts'),
       bitmaps_reference: path.join(dataPath, 'bitmaps_reference'),
@@ -68,9 +60,11 @@ const getConfig = async environment => {
       html_report: path.join(dataPath, 'report_html'),
       ci_report: path.join(dataPath, 'report_ci'),
     },
-
+    ...globalOverwrites,
     scenarios: urls.map(u => {
       const url = new URL(u);
+
+      // Append custom query params
       if (query) {
         const searchParams = new URLSearchParams(url.search);
         Array.from(query.replace(/^\?/, '').split('&')).forEach(param => {
@@ -83,13 +77,10 @@ const getConfig = async environment => {
       }
 
       const result = {
+        selectors: ['document'],
+        ...scenarioOverwrites,
         label: url.pathname.replace(/\.[^.]+$/, ''),
         url: url.href,
-        selectors: ['document', ...selectors],
-        delay,
-        hoverSelectors,
-        clickSelectors,
-        scrollToSelector,
       };
 
       if (cookiePath && fs.existsSync(cookiePath)) {

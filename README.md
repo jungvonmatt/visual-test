@@ -8,16 +8,8 @@ Convinience wrapper around [`BackstopJS`](https://garris.github.io/BackstopJS/)
 Clone project
 
 ```sh
-git clone ssh://git@stash.jvm.de:7999/jin/visual-regression-testing.git
+npm i -g git+ssh://git@stash.jvm.de:7999/jin/visual-regression-testing.git
 ```
-
-Install dependencies
-
-```
-npm i
-```
-
-I suggest to add a symlink inside `~/bin` to the executable so the tool can be started from anywhere.
 
 ## Usage
 
@@ -67,24 +59,21 @@ This is currently configured for the bmw.com website. To add other projects you 
 Name: `project`.visualtest.config.js
 
 **Example:**
+
 ```
 module.exports = {
   environments: [
     {
       name: 'Preview',
-      value: {
-        host: 'http://preview.jvm.com',
-        base: '/preview/project/web',
-        user: 'jvmnext',
-        pass: '...',
-      },
+      host: 'http://preview.jvm.com',
+      base: '/preview/project/web',
+      user: 'jvmnext',
+      pass: '...',
     },
     {
       name: 'Live',
-      value: {
-        host: 'http://live.jvm.com',
-        base: '/live/project/web',
-      },
+      host: 'http://live.jvm.com',
+      base: '/live/project/web',
     },
   ],
   urls: [
