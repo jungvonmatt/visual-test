@@ -18,7 +18,7 @@
     "cli.js",
     "index.js",
     "engine",
-    "utils"
+    "lib"
   ],
   "repository": {
     "type": "git",
