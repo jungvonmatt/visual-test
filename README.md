@@ -18,13 +18,13 @@ npm i -g git+ssh://git@stash.jvm.de:7999/jin/visual-regression-testing.git
 **Initialize project**
 
 ```
-./visual-tester reference
+visual-tester reference
 ```
 
 **Run tests**
 
 ```
-./visual-tester test
+visual-tester test
 ```
 
 **Approve tests**
@@ -50,8 +50,6 @@ Or just call with the url to the sitemap
 ```
 visual-tester test https://fahrrad.hamburg/sitemap.xml
 ```
-
-
 
 ## Add projects
 
