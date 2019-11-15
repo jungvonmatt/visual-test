@@ -3,6 +3,8 @@
 Automates visual regression testing of our projects by comparing DOM screenshots over time.<br/>
 Convinience wrapper around [`BackstopJS`](https://garris.github.io/BackstopJS/)
 
+![Browser report](https://stash.jvm.de/projects/JIN/repos/visual-regression-testing/raw/example/screen.png)
+
 ## Install
 
 Clone project
@@ -48,6 +50,8 @@ Or just call with the url to the sitemap
 ```
 visual-tester test https://fahrrad.hamburg/sitemap.xml
 ```
+
+
 
 ## Add projects
 
