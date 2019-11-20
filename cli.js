@@ -5,10 +5,10 @@ const inquirer = require('inquirer');
 const chalk = require('chalk');
 const meow = require('meow');
 const { URL } = require('url');
-const { getProjects, getValue, getHostame, getSitemap, readConfigs } = require('./lib/utils');
-
+const { getHostame, getSitemap, readConfigs } = require('./lib/utils');
 const run = require('.');
 
+// Initialize cli
 const cli = meow(
   `
 	Usage
@@ -50,15 +50,21 @@ const cli = meow(
   }
 );
 
+/**
+ * Get project from configs
+ * @param {*} configs Config data
+ */
 const getProject = async configs => {
   if (configs.length === 0) {
     return null;
   }
 
+  // Return the first  project if only one exists
   if (configs.length === 1) {
     return configs[0];
   }
 
+  // Ask the user if there are more than one projects available
   const choices = [...new Set(configs.filter(config => config.name).map(config => config.name))];
   const { project } = await inquirer.prompt({
     type: 'list',
@@ -68,41 +74,12 @@ const getProject = async configs => {
   });
 
   return configs.find(config => config.name === project);
-
-  // const { configDir, config } = cli.flags;
-
-  // let choices = [];
-  // if (config) {
-  //   choices = await getProjects({ config });
-  // } else if (configDir) {
-  //   choices = await getProjects({ configDir });
-  // } else {
-  //   const choices1 = await getProjects(process.cwd());
-  //   const choices2 = configDir ? await getProjects(configDir) : [];
-  //   const choices3 = await getProjects();
-
-  //   choices = [...choices1, ...choices2, ...choices3];
-  // }
-
-  // if (choices.length === 0) {
-  //   console.log(`${chalk.red('Error, no project specified!')}`);
-  // }
-
-  // if (choices.length === 1) {
-  //   const { value: project } = choices[0];
-  //   return project;
-  // }
-
-  // const { project } = await inquirer.prompt({
-  //   type: 'list',
-  //   name: 'project',
-  //   message: 'Choose project',
-  //   choices,
-  // });
-
-  return project;
 };
 
+/**
+ * Build volatile environment from sitemap
+ * @param {String} sitemap Url to sitemap
+ */
 const getEnvironmentFromSitemap = async sitemap => {
   const url = new URL(sitemap);
   const environment = {
@@ -119,8 +96,11 @@ const getEnvironmentFromSitemap = async sitemap => {
   };
 };
 
+/**
+ * Build environment from project
+ * @param {Object} project Project config
+ */
 const getEnvironmentFromProject = async project => {
-  // const
   const { environments: environmentsRaw, urls, uid, ...projectData } = project;
 
   if (!environmentsRaw && !urls) {
@@ -133,6 +113,7 @@ const getEnvironmentFromProject = async project => {
     process.exit(1);
   }
 
+  // Handle async function or static config
   const environments = environmentsRaw
     ? Array.isArray(environmentsRaw)
       ? environmentsRaw
@@ -168,6 +149,7 @@ const getEnvironmentFromProject = async project => {
     };
   }
 
+  // Handle async function passed as url prop in the config
   if (typeof urls === 'function') {
     return {
       ...result,

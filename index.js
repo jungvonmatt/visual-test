@@ -32,6 +32,12 @@ const defaultConfig = {
   ],
 };
 
+/**
+ * Get backstop config for environment
+ * See: https://github.com/garris/BackstopJS#using-backstopjs
+ * @param {Object} environment test environment
+ * @returns {Object}
+ */
 const getConfig = async environment => {
   const { urls, uid, query, backstopjs = {}, outputDir } = environment;
 
@@ -92,6 +98,12 @@ const getConfig = async environment => {
   };
 };
 
+/**
+ * Default export which runs ther specified backstop command
+ * @param {Object} environment Test environment
+ * @param {String} cmd Backstop command
+ * @returns {Promise}
+ */
 module.exports = async (environment, cmd = 'test') => {
   const config = await getConfig(environment);
 
