@@ -5,7 +5,8 @@
   "description": "Automated visual regression testing",
   "main": "index.js",
   "bin": {
-    "visual-test": "cli.js"
+    "visual-test": "cli.js",
+    "screeny": "cli.js"
   },
   "scripts": {
     "start": "node cli.js",
