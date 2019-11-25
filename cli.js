@@ -21,6 +21,8 @@ const cli = meow(
 
 	Options
     --query       Add query params to page request
+    --approve     Approve test (same as approve cmd)
+    --reference   Generate reference images (same as reference cmd)
     --config      Manually specify a <project>.visualtest.config.js file
     --config-dir  Specify custom directory to search for project configs
     --output-dir  Specify custom output directory
@@ -100,7 +102,7 @@ const getEnvironmentFromSitemap = async sitemap => {
  * Build environment from project
  * @param {Object} project Project config
  */
-const getEnvironmentFromProject = async project => {
+const getEnvironmentFromProject = async (project, reference) => {
   const { environments: environmentsRaw, urls, uid, ...projectData } = project;
 
   if (!environmentsRaw && !urls) {
@@ -121,8 +123,8 @@ const getEnvironmentFromProject = async project => {
     : [];
 
   let [environment] = environments;
+  const choices = environments.map(env => env.name || env.host);
   if (environments.length > 1) {
-    const choices = environments.map(env => env.name || env.host);
     const { environmentName } = await inquirer.prompt({
       type: 'list',
       name: 'environmentName',
@@ -141,6 +143,21 @@ const getEnvironmentFromProject = async project => {
     uid: [uid, envId].filter(v => v).join('/'),
     urls: sitemapUrls,
   };
+
+  if (environments.length > 1 && reference) {
+    const { name: selected } = environment;
+    const { environmentName } = await inquirer.prompt({
+      type: 'list',
+      name: 'environmentName',
+      message: 'Choose reference environment',
+      choices: choices,
+      default: selected,
+    });
+
+    if (environmentName !== selected) {
+      result.referenceEnvironment = environments.find(env => (env.name || env.host) === environmentName);
+    }
+  }
 
   if (Array.isArray(urls)) {
     return {
@@ -163,10 +180,17 @@ const getEnvironmentFromProject = async project => {
 // Run
 (async () => {
   let [cmd = 'test', sitemap = ''] = cli.input;
+  const { reference, approve, compare } = cli.flags;
 
   if (!sitemap && /\:\/\//.test(cmd)) {
     sitemap = cmd;
     cmd = 'test';
+  }
+
+  if (reference) {
+    cmd = 'reference';
+  } else if (approve) {
+    cmd = 'approve';
   }
 
   if (sitemap) {
@@ -181,6 +205,7 @@ const getEnvironmentFromProject = async project => {
   }
 
   const project = await getProject(configs);
-  const environment = await getEnvironmentFromProject(project);
+  const environment = await getEnvironmentFromProject(project, cmd === 'reference');
+
   return run({ ...environment, ...cli.flags }, cmd);
 })();

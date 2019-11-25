@@ -33,13 +33,52 @@ const defaultConfig = {
 };
 
 /**
+ * Get scenario url
+ * @param {String} url
+ * @param {Object} options
+ * @returns {Object} WHATWG URL Object
+ */
+const resolveUrl = (url, options) => {
+  const { host, base, user, pass, query } = options || {};
+  let urlObj;
+  if (url.includes('://')) {
+    urlObj = new URL(url);
+  } else if (url.startsWith('/')) {
+    urlObj = new URL(`${host}${v}`);
+  } else {
+    urlObj = new URL(`${host}${path.join(base || '/', url)}`);
+  }
+
+  if (user) {
+    urlObj.username = user;
+  }
+  if (pass) {
+    urlObj.password = pass;
+  }
+
+  // Append custom query params
+  if (query) {
+    const searchParams = new URLSearchParams(urlObj.search);
+    Array.from(query.replace(/^\?/, '').split('&')).forEach(param => {
+      const [key, value] = param.split('=');
+      if (key) {
+        searchParams.append(key, value);
+      }
+    });
+    urlObj.search = searchParams.toString();
+  }
+
+  return urlObj;
+};
+
+/**
  * Get backstop config for environment
  * See: https://github.com/garris/BackstopJS#using-backstopjs
  * @param {Object} environment test environment
  * @returns {Object}
  */
 const getConfig = async environment => {
-  const { urls, uid, query, backstopjs = {}, outputDir } = environment;
+  const { referenceEnvironment, urls, uid, query, backstopjs = {}, outputDir, host, user, pass, base } = environment;
 
   const globalOverwrites = {
     ...defaultConfig,
@@ -68,19 +107,7 @@ const getConfig = async environment => {
     },
     ...globalOverwrites,
     scenarios: urls.map(u => {
-      const url = new URL(u);
-
-      // Append custom query params
-      if (query) {
-        const searchParams = new URLSearchParams(url.search);
-        Array.from(query.replace(/^\?/, '').split('&')).forEach(param => {
-          const [key, value] = param.split('=');
-          if (key) {
-            searchParams.append(key, value);
-          }
-        });
-        url.search = searchParams.toString();
-      }
+      const url = resolveUrl(u, environment);
 
       const result = {
         selectors: ['document'],
@@ -91,6 +118,11 @@ const getConfig = async environment => {
 
       if (cookiePath && fs.existsSync(cookiePath)) {
         result.cookiePath = cookiePath;
+      }
+
+      if (referenceEnvironment) {
+        const referenceUrl = resolveUrl(u, referenceEnvironment);
+        result.referenceUrl = referenceUrl.href;
       }
 
       return result;
