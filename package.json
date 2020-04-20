@@ -1,5 +1,5 @@
 {
-  "name": "@jvm/visual-regression-testing",
+  "name": "@jungvonmatt/visual-test",
   "version": "1.0.0",
   "private": true,
   "description": "Automated visual regression testing",
