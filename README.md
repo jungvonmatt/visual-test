@@ -5,12 +5,27 @@ Convinience wrapper around [`BackstopJS`](https://garris.github.io/BackstopJS/)
 
 ![Browser report](https://stash.jvm.de/projects/JIN/repos/visual-regression-testing/raw/example/screen.png)
 
-## Install
+## Getting started
 
-Clone project
+### Prerequisites
 
-```sh
-npm i -g git+ssh://git@stash.jvm.de:7999/jin/visual-regression-testing.git
+This package is hosted in the github registry.
+This means you need to [configure npm for use with GitHub Packages](https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-npm-for-use-with-github-packages)
+
+The global _.npmrc_ file should something look like this:
+
+```
+//registry.npmjs.org/:_authToken=GITHUB_TOKEN
+//npm.pkg.github.com/:_authToken=NPM_TOKEN
+
+registry=https://registry.npmjs.org/
+@jungvonmatt:registry=https://npm.pkg.github.com/
+```
+
+### Install
+
+```bash
+npm i @jungvonmatt/visual-test
 ```
 
 ## Usage
