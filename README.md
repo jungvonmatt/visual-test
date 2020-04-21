@@ -33,37 +33,37 @@ npm i @jungvonmatt/visual-test
 **Initialize project**
 
 ```
-visual-tester reference
+visual-test reference
 ```
 
 **Run tests**
 
 ```
-visual-tester test
+visual-test test
 ```
 
 **Approve tests**
 
 ```
-visual-tester approve
+visual-test approve
 ```
 
 You can optionally add query parameters to the requests with the `--query` argument
 
 ```
-visual-tester test --query 'optimize-css=1&debug=true'
+visual-test test --query 'optimize-css=1&debug=true'
 ```
 
 You can specify a custom config directory using the `--config-dir` option
 
 ```
-visual-tester test --config-dir ~/.my-visualtest-directory
+visual-test test --config-dir ~/.my-visualtest-directory
 ```
 
 Or just call with the url to the sitemap
 
 ```
-visual-tester test https://fahrrad.hamburg/sitemap.xml
+visual-test test https://fahrrad.hamburg/sitemap.xml
 ```
 
 ## Add projects

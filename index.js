@@ -44,7 +44,7 @@ const resolveUrl = (url, options) => {
   if (url.includes('://')) {
     urlObj = new URL(url);
   } else if (url.startsWith('/')) {
-    urlObj = new URL(`${host}${v}`);
+    urlObj = new URL(`${host}${url}`);
   } else {
     urlObj = new URL(`${host}${path.join(base || '/', url)}`);
   }
@@ -59,7 +59,7 @@ const resolveUrl = (url, options) => {
   // Append custom query params
   if (query) {
     const searchParams = new URLSearchParams(urlObj.search);
-    Array.from(query.replace(/^\?/, '').split('&')).forEach(param => {
+    Array.from(query.replace(/^\?/, '').split('&')).forEach((param) => {
       const [key, value] = param.split('=');
       if (key) {
         searchParams.append(key, value);
@@ -77,7 +77,7 @@ const resolveUrl = (url, options) => {
  * @param {Object} environment test environment
  * @returns {Object}
  */
-const getConfig = async environment => {
+const getConfig = async (environment) => {
   const { referenceEnvironment, urls, uid, query, backstopjs = {}, outputDir, host, user, pass, base } = environment;
 
   const globalOverwrites = {
@@ -106,7 +106,7 @@ const getConfig = async environment => {
       ci_report: path.join(dataPath, 'report_ci'),
     },
     ...globalOverwrites,
-    scenarios: urls.map(u => {
+    scenarios: urls.map((u) => {
       const url = resolveUrl(u, environment);
 
       const result = {

@@ -56,7 +56,7 @@ const cli = meow(
  * Get project from configs
  * @param {*} configs Config data
  */
-const getProject = async configs => {
+const getProject = async (configs) => {
   if (configs.length === 0) {
     return null;
   }
@@ -67,7 +67,7 @@ const getProject = async configs => {
   }
 
   // Ask the user if there are more than one projects available
-  const choices = [...new Set(configs.filter(config => config.name).map(config => config.name))];
+  const choices = [...new Set(configs.filter((config) => config.name).map((config) => config.name))];
   const { project } = await inquirer.prompt({
     type: 'list',
     name: 'project',
@@ -75,14 +75,14 @@ const getProject = async configs => {
     choices,
   });
 
-  return configs.find(config => config.name === project);
+  return configs.find((config) => config.name === project);
 };
 
 /**
  * Build volatile environment from sitemap
  * @param {String} sitemap Url to sitemap
  */
-const getEnvironmentFromSitemap = async sitemap => {
+const getEnvironmentFromSitemap = async (sitemap) => {
   const url = new URL(sitemap);
   const environment = {
     host: url.origin,
@@ -123,7 +123,7 @@ const getEnvironmentFromProject = async (project, reference) => {
     : [];
 
   let [environment] = environments;
-  const choices = environments.map(env => env.name || env.host);
+  const choices = environments.map((env) => env.name || env.host);
   if (environments.length > 1) {
     const { environmentName } = await inquirer.prompt({
       type: 'list',
@@ -131,7 +131,7 @@ const getEnvironmentFromProject = async (project, reference) => {
       message: 'Choose environment',
       choices,
     });
-    environment = environments.find(env => (env.name || env.host) === environmentName);
+    environment = environments.find((env) => (env.name || env.host) === environmentName);
   }
 
   const envId = environment ? getHostame(environment) : '';
@@ -140,7 +140,7 @@ const getEnvironmentFromProject = async (project, reference) => {
   const result = {
     ...projectData,
     ...(environment || {}),
-    uid: [uid, envId].filter(v => v).join('/'),
+    uid: [uid, envId].filter((v) => v).join('/'),
     urls: sitemapUrls,
   };
 
@@ -155,7 +155,7 @@ const getEnvironmentFromProject = async (project, reference) => {
     });
 
     if (environmentName !== selected) {
-      result.referenceEnvironment = environments.find(env => (env.name || env.host) === environmentName);
+      result.referenceEnvironment = environments.find((env) => (env.name || env.host) === environmentName);
     }
   }
 
