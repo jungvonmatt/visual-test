@@ -3,7 +3,7 @@
 Automates visual regression testing of our projects by comparing DOM screenshots over time.<br/>
 Convinience wrapper around [`BackstopJS`](https://garris.github.io/BackstopJS/)
 
-![Browser report](https://stash.jvm.de/projects/JIN/repos/visual-regression-testing/raw/example/screen.png)
+![Browser report](./example/screen.png)
 
 ## Getting started
 
@@ -70,7 +70,7 @@ visual-test test https://fahrrad.hamburg/sitemap.xml
 
 This is currently configured for the bmw.com website. To add other projects you need to place a config file in one of the following locations:
 
-- In a custom path specified by `--config-dir``
+- In a custom path specified by `--config-dir`
 - In the current working directory
 
 Name: `project`.visualtest.config.js
