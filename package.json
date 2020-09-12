@@ -1,6 +1,6 @@
 {
   "name": "@jungvonmatt/visual-test",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Automated visual regression testing",
   "main": "index.js",
   "bin": {
