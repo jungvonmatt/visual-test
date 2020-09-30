@@ -138,4 +138,12 @@ module.exports = {
 };
 ```
 
-You can also use an async function instead of the static array. The `urls` function receives the chosen environment as first parameter so you might grab the sitemap.xml to generate the urls dynamically.
+## Can I contribute?
+
+Of course. We appreciate all of our [contributors](https://github.com/jungvonmatt/visual-test/graphs/contributors) and
+welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
+free to open up an issue and we can discuss it.
+
+## License
+
+MIT
